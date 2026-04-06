@@ -1,0 +1,3 @@
+[submodule "lexuau"]
+	path = lexuau
+	url = https://github.com/cameronpcampbell/lexuau.git
