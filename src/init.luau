@@ -1,5 +1,7 @@
 --!strict
 
+-- DISCLAIMER: This lexer is not finished yet!
+
 local lexuau = require("./lexuau/src")
 
 local function table_merge(tbleA: any, tbleB: any)
