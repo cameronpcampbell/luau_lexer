@@ -50,17 +50,17 @@ local expressions_config: lexuau.LexerConfig<LexerState> = {
 
         multiline_string_start = {
             pattern = "\\[\\[",
-            callback = function(value, lexer, state: LexerState)
-                return value, lexer:morph(multiline_string_lexer :: lexuau.Lexer<LexerState>)
+            callback = function(value, state: LexerState)
+                return value, multiline_string_lexer :: lexuau.Lexer<LexerState>
             end
         },
 
         interpolated_string_start = {
             pattern = "`",
-            callback = function(value, lexer, state: LexerState)
+            callback = function(value, state: LexerState)
                 state.interpolated_string_depth += 1
 
-                return value, lexer:morph(interpolated_string_lexer :: lexuau.Lexer<LexerState>)
+                return value, interpolated_string_lexer :: lexuau.Lexer<LexerState>
             end
         }
     },
@@ -93,8 +93,8 @@ multiline_string_lexer = lexuau.new({
     patterns = {
         multiline_string_close = {
             pattern = "\\]\\]",
-            callback = function(value, lexer, state: LexerState)
-                return value, lexer:morph(luau_lexer :: lexuau.Lexer<LexerState>)
+            callback = function(value, state: LexerState)
+                return value, luau_lexer :: lexuau.Lexer<LexerState>
             end
         }
     },
@@ -112,19 +112,19 @@ interpolated_string_lexer = lexuau.new({
         text_block = "[^{`]+",
         interpolated_string_expression_start = {
             pattern = "{",
-            callback = function(value, lexer, state: LexerState)
-                return value, lexer:morph(interpolated_string_expression_lexer :: lexuau.Lexer<LexerState>)
+            callback = function(value, state: LexerState)
+                return value, interpolated_string_expression_lexer :: lexuau.Lexer<LexerState>
             end
         },
         interpolated_string_end = {
             pattern = "`",
-            callback = function(value, lexer, state: LexerState)
+            callback = function(value, state: LexerState)
                 state.interpolated_string_depth -= 1
 
                 local sublexer =
                     if state.interpolated_string_depth == 0 then
-                        lexer:morph(luau_lexer :: lexuau.Lexer<LexerState>)
-                    else lexer:morph(interpolated_string_expression_lexer :: lexuau.Lexer<LexerState>)
+                        luau_lexer :: lexuau.Lexer<LexerState>
+                    else interpolated_string_expression_lexer :: lexuau.Lexer<LexerState>
 
                 return value, sublexer
             end
@@ -143,8 +143,8 @@ interpolated_string_expression_lexer = lexuau.new(table_merge({
     patterns = {
         interpolated_string_expression_end = {
             pattern = "}",
-            callback = function(value, lexer, state: LexerState)
-                return value, lexer:morph(interpolated_string_lexer :: lexuau.Lexer<LexerState>)
+            callback = function(value, state: LexerState)
+                return value, interpolated_string_lexer :: lexuau.Lexer<LexerState>
             end
         }
     },
